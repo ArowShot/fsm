@@ -7,6 +7,19 @@ type FSM struct {
 	previousState *State // Keep track of the previous state so we know when to call the OnEnter function
 }
 
+// GetCurrentState returns the current state of the FSM
+func (fsm *FSM) GetCurrentState() string {
+	if fsm.states == nil {
+		return "" // Return nothing if there are no registered stated
+	}
+	for name, state := range fsm.states { // Loop through all of the states
+		if state == fsm.currentState { // If the current state is the state in the loop
+			return name			   // then return the name of that state
+		}
+	}
+	return "" // Return nothing by default
+}
+
 // GetStateByName returns a pointer to a state given it's name
 //
 // Returns nil if state is not found

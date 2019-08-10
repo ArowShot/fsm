@@ -7,6 +7,7 @@ import (
 	"github.com/arowshot/fsm"
 )
 
+// turtle is a struct which represents a turtle
 type turtle struct {
 	hunger   int
 	sunlight int

@@ -1,0 +1,9 @@
+__debug_bin
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+.vscode/*
