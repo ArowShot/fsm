@@ -14,9 +14,9 @@ func main() {
 
 	// Create the turtle
 	turtle := turtle{}
-	var idleState fsm.State = &IdleState{&turtle}     // Create idle state with a refernece to the turtle
-	var eatingState fsm.State = &EatingState{&turtle} // Create eating state with a refernece to the turtle
-	var warmingState fsm.State = &IdleState{&turtle}  // Create warming state with a refernece to the turtle
+	var idleState fsm.State = &IdleState{&turtle}       // Create idle state with a refernece to the turtle
+	var eatingState fsm.State = &EatingState{&turtle}   // Create eating state with a refernece to the turtle
+	var warmingState fsm.State = &WarmingState{&turtle} // Create warming state with a refernece to the turtle
 
 	// Add states to fsm
 	basicfsm.AddState("idle", &idleState)

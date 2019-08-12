@@ -3,7 +3,7 @@ package main
 import (
 	"image/gif"
 	"log"
-	"os"
+	"bytes"
 	"time"
 
 	"github.com/arowshot/fsm"
@@ -23,7 +23,7 @@ type Player struct {
 func MakePlayer() *Player {
 	player := Player{}
 
-	idleState := autofsm.AutoState{Action: player.showGif(&player, "idle.gif")}              // Create idle state
+	idleState := autofsm.AutoState{Action: player.showGif(&player, "assets/idle.gif")}              // Create idle state
 	player.FSM.AddState("idle", idleState.ToState())                                         // Add to fsm
 	idleState.AddTransition("jump", func() bool { return player.Jump })                      // Transition to the jump state if the jump boolean is true
 	idleState.AddTransition("walkLeft", func() bool { return player.HorizontalMove < -0.1 }) // Tansition to walkLeft when moving to the left
@@ -36,11 +36,11 @@ func MakePlayer() *Player {
 	player.FSM.AddState("jump", jumpState.ToState()) // Add to fsm
 	jumpState.AddTransition("idle", nil)             // Transition back to idle state after jump is finished
 
-	walkLeftState := autofsm.AutoState{Action: player.showGif(&player, "run.gif")}           // Create WalkLeftState with the ShowGif action
+	walkLeftState := autofsm.AutoState{Action: player.showGif(&player, "assets/run.gif")}           // Create WalkLeftState with the ShowGif action
 	player.FSM.AddState("walkLeft", walkLeftState.ToState())                                 // Add to fsm
 	walkLeftState.AddTransition("idle", func() bool { return player.HorizontalMove > -0.1 }) // Return to idle if not moving left anymore
 
-	walkRightState := autofsm.AutoState{Action: player.showGif(&player, "run.gif")}          // Create WalkRightState with the ShowGif action
+	walkRightState := autofsm.AutoState{Action: player.showGif(&player, "assets/run.gif")}          // Create WalkRightState with the ShowGif action
 	player.FSM.AddState("walkRight", walkRightState.ToState())                               // Add to fsm
 	walkRightState.AddTransition("idle", func() bool { return player.HorizontalMove < 0.1 }) // Return to idle if not moving right anymore
 
@@ -51,13 +51,12 @@ func MakePlayer() *Player {
 
 // showGif will return an action that will display one cycle of an animated gif
 func (pl *Player) showGif(ply *Player, path string) func(*fsm.FSM) {
-	file, err := os.Open(path) // Open the gif
+	data, err := Asset(path) // Open the gif
 	if err != nil {
 		log.Fatalln(err) // Exit if there's an error
 	}
-	defer file.Close() // Close the file when we're done
 
-	gifs, err := gif.DecodeAll(file) // Decode the gif
+	gifs, err := gif.DecodeAll(bytes.NewReader(data)) // Decode the gif
 	if err != nil {
 		log.Fatalln(err) // Exit if there's an error
 	}
@@ -65,7 +64,7 @@ func (pl *Player) showGif(ply *Player, path string) func(*fsm.FSM) {
 	images := []pixel.Picture{}
 	delay := []int{}
 
-	for i, srcImg := range gifs.Image {
+	for i, srcImg := range gifs.Image { // Loop through all the frames and add their data and delays to the arrays
 		images = append(images, pixel.PictureDataFromImage(srcImg))
 		delay = append(delay, gifs.Delay[i])
 	}

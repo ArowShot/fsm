@@ -71,3 +71,31 @@ func (is *EatingState) OnStay(fsm *fsm.FSM) (nextState string) {
 
 	return "" // Return "" which will not change the state
 }
+
+// WarmingState is the turtle's warming state
+type WarmingState struct {
+	turtle *turtle // A reference to the turtle
+}
+
+// OnEnter is called when the turtle enters the warming state
+func (ws *WarmingState) OnEnter(fsm *fsm.FSM) {
+	fmt.Println("The turtle is entering the warming state")
+}
+
+// OnStay is called constantly while the turtle is in the eating state
+func (ws *WarmingState) OnStay(fsm *fsm.FSM) (nextState string) {
+	fmt.Println("Turtle is warmign in sunlight...")
+
+	time.Sleep(1 * time.Second) // Wait 2 seconds
+	ws.turtle.sunlight--          // Then subtract one from sunlight to absorb the sunlight
+
+	fmt.Printf("Turtle absorbed sunlight, now has %v left\n", ws.turtle.sunlight)
+
+	if ws.turtle.sunlight < 1 { // Check turtle's sunlight
+		return "idle" // Return to idle if the turtle has eaten enough
+	}
+
+	fmt.Println("Turtle still has sunlight, warming more...")
+
+	return "" // Return "" which will not change the state
+}
